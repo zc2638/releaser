@@ -18,36 +18,57 @@ import (
 	"fmt"
 	"runtime"
 	"time"
+
+	"github.com/blang/semver/v4"
 )
 
-var version string
+var data string
 
 var Version *VersionEntry
 
 func init() {
-	ve, err := Decode(version)
-	if err != nil {
-		ve = &VersionEntry{}
+	Version = &VersionEntry{}
+	if data != "" {
+		_ = Decode(data, Version)
 	}
-	ve.Complete()
-	Version = ve
+	Version.Complete()
+}
+
+type VersionGit struct {
+	Branch string `json:"branch,omitempty" yaml:"branch,omitempty"`
+	Commit string `json:"commit,omitempty" yaml:"commit,omitempty"`
+	Tag    string `json:"tag,omitempty" yaml:"tag,omitempty"`
 }
 
 type VersionEntry struct {
-	GitTag    string `json:"gitTag" yaml:"gitTag"`
-	GitCommit string `json:"gitCommit" yaml:"gitCommit"`
-	GitBranch string `json:"gitBranch" yaml:"gitBranch"`
-	BuildDate string `json:"buildDate,omitempty" yaml:"buildDate,omitempty"`
-	GoVersion string `json:"goVersion,omitempty" yaml:"goVersion,omitempty"`
-	Compiler  string `json:"compiler,omitempty" yaml:"compiler,omitempty"`
-	Platform  string `json:"platform,omitempty" yaml:"platform,omitempty"`
+	Version   *semver.Version   `json:"version,omitempty" yaml:"version,omitempty"`
+	Git       *VersionGit       `json:"git,omitempty" yaml:"git,omitempty"`
+	Metadata  map[string]string `json:"metadata,omitempty" yaml:"metadata,omitempty"`
+	BuildDate string            `json:"buildDate,omitempty" yaml:"buildDate,omitempty"`
+	GoVersion string            `json:"goVersion,omitempty" yaml:"goVersion,omitempty"`
+	Compiler  string            `json:"compiler,omitempty" yaml:"compiler,omitempty"`
+	Platform  string            `json:"platform,omitempty" yaml:"platform,omitempty"`
 }
 
 func (ve VersionEntry) String() string {
-	if ve.GitTag != "" {
-		return ve.GitTag
+	if ve.Version != nil {
+		version := ve.Version.String()
+		if version != "" {
+			return version
+		}
 	}
-	return ve.GitCommit
+	version := "0.0.0"
+	branch := "unknown"
+	if ve.Git == nil {
+		return version + "-" + branch
+	}
+	if ve.Git.Tag != "" {
+		return ve.Git.Tag
+	}
+	if ve.Git.Branch != "" {
+		branch = ve.Git.Branch
+	}
+	return version + "-" + branch + "." + ve.Git.Commit
 }
 
 func (ve *VersionEntry) Complete() {

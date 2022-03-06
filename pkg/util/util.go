@@ -12,26 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package releaser
+package util
 
 import (
-	"encoding/base64"
-
-	"gopkg.in/yaml.v3"
+	"fmt"
 )
 
-func Encode(in interface{}) (string, error) {
-	b, err := yaml.Marshal(in)
-	if err != nil {
-		return "", err
+func CheckArgs(args []string, num int) error {
+	l := len(args)
+	if l != num {
+		return fmt.Errorf("unusual number of parameters, expect %d, take %d", num, l)
 	}
-	return base64.StdEncoding.EncodeToString(b), nil
+	return nil
 }
 
-func Decode(data string, out interface{}) error {
-	b, err := base64.StdEncoding.DecodeString(data)
-	if err != nil {
-		return err
+func CheckArgsGT(args []string, num int) error {
+	l := len(args)
+	if l > num {
+		return fmt.Errorf("unusual number of parameters, max expect %d, take %d", num, l)
 	}
-	return yaml.Unmarshal(b, out)
+	return nil
 }

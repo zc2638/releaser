@@ -1,0 +1,8 @@
+name: releaser
+kind: Project
+version: 0.0.1
+git:
+    branch: |
+        main
+    commit: |
+        4de519b7d6e66e04ece519006479f9d3c699cb40
