@@ -32,13 +32,18 @@ func main() {
 ```
 
 ## Install
-### 1. Clone
+### install from source
+#### 1. Clone
 ```shell
 git clone https://github.com/zc2638/releaser.git releaser && cd "$_"
 ```
-### 2. Build
+#### 2. Build
 ```shell
 go build -ldflags="-X $(go run github.com/zc2638/releaser/cmd get)" -o releaser github.com/zc2638/releaser/cmd
+```
+### Install from Docker
+```shell
+docker run --rm -it zc2638/releaser:0.0.1 
 ```
 
 ## Commands

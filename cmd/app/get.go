@@ -20,13 +20,13 @@ import (
 	"runtime/debug"
 	"strings"
 
+	"github.com/99nil/go/sets"
 	"github.com/blang/semver/v4"
 	"github.com/spf13/cobra"
+
 	"github.com/zc2638/releaser"
 	"github.com/zc2638/releaser/pkg/storage"
 	"github.com/zc2638/releaser/pkg/util"
-
-	"github.com/99nil/go/sets"
 )
 
 var moduleName = "github.com/zc2638/releaser"

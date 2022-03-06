@@ -9,7 +9,8 @@ RUN go mod download
 
 WORKDIR /work
 ADD . .
-RUN GOOS=linux CGO_ENABLED=0 go build -ldflags="-s -w" -o releaser github.com/zc2638/releaser/cmd
+RUN go run github.com/zc2638/releaser/cmd set --git &&\
+ GOOS=linux CGO_ENABLED=0 go build -ldflags="-s -w -X $(go run github.com/zc2638/releaser/cmd get)" -o releaser github.com/zc2638/releaser/cmd
 
 FROM alpine:3.6 as alpine
 RUN apk add -U --no-cache ca-certificates

@@ -19,12 +19,12 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/99nil/go/sets"
 	"github.com/spf13/cobra"
+
 	"github.com/zc2638/releaser"
 	"github.com/zc2638/releaser/pkg/storage"
 	"github.com/zc2638/releaser/pkg/util"
-
-	"github.com/99nil/go/sets"
 )
 
 func NewRootCommand() *cobra.Command {
