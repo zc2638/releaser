@@ -4,13 +4,7 @@ A tool for Golang programs that automatically generate versions at build time.
 
 ## Quick Start
 
-### 1. Run Build
-
-```shell
-go build -ldflags="-X $(releaser get)" main.go
-```
-
-### 2. Code import
+### 1. Code import
 
 ```go
 package main
@@ -31,19 +25,38 @@ func main() {
 }
 ```
 
+### 2. Run Build
+
+```shell
+go build -ldflags="-X $(releaser get)" main.go
+```
+
 ## Install
-### install from source
+
+### Install from source
+
+```shell
+go install -v github.com/zc2638/releaser/cmd/releaser@latest
+```
+
+### Install from Docker
+
+```shell
+docker run --rm -it zc2638/releaser:0.0.1 
+```
+
+### Build from source
+
 #### 1. Clone
+
 ```shell
 git clone https://github.com/zc2638/releaser.git releaser && cd "$_"
 ```
+
 #### 2. Build
+
 ```shell
 go build -ldflags="-X $(go run github.com/zc2638/releaser/cmd get)" -o releaser github.com/zc2638/releaser/cmd
-```
-### Install from Docker
-```shell
-docker run --rm -it zc2638/releaser:0.0.1 
 ```
 
 ## Commands

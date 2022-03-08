@@ -20,6 +20,7 @@ import (
 	"os"
 
 	"github.com/99nil/go/sets"
+	"github.com/blang/semver/v4"
 	"github.com/spf13/cobra"
 
 	"github.com/zc2638/releaser"
@@ -28,6 +29,13 @@ import (
 )
 
 func NewRootCommand() *cobra.Command {
+	if releaser.Version.Version == nil {
+		releaser.Version.Version = &semver.Version{
+			Major: 0,
+			Minor: 0,
+			Patch: 1,
+		}
+	}
 	cmd := &cobra.Command{
 		Use:     "releaser",
 		Version: releaser.Version.String(),

@@ -17,7 +17,7 @@ package main
 import (
 	"os"
 
-	"github.com/zc2638/releaser/cmd/app"
+	"github.com/zc2638/releaser/cmd/releaser/app"
 )
 
 func main() {
