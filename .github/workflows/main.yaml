@@ -52,4 +52,4 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build
-        run: go build -ldflags="-s -w" -o releaser github.com/zc2638/releaser/cmd
+        run: go build -ldflags="-s -w" -o releaser github.com/zc2638/releaser/cmd/releaser
