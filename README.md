@@ -2,6 +2,9 @@
 
 A tool for Golang programs that automatically generate versions at build time.
 
+## Dependencies
+Golang Version >= 1.18
+
 ## Quick Start
 
 ### 1. Code import
@@ -111,3 +114,6 @@ releaser get <service name> --filter version
 releaser get <service name> --filter meta.status
 ```
 
+## TODO
+### releaser delete
+### releaser each
