@@ -86,3 +86,18 @@ func (e *Entry) Marshal() ([]byte, error) {
 func (e *Entry) Unmarshal(in []byte) error {
 	return yaml.Unmarshal(in, &e)
 }
+
+func (e *Entry) ToMap() map[string]string {
+	m := make(map[string]string)
+	m[buildWithPrefix("name")] = e.Name
+	m[buildWithPrefix("kind")] = e.Kind
+	m[buildWithPrefix("version")] = e.Version
+	for k, v := range e.Metadata {
+		m[buildWithPrefix("meta."+k)] = v
+	}
+	return m
+}
+
+func buildWithPrefix(s string) string {
+	return "releaser." + s
+}

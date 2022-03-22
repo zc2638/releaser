@@ -15,23 +15,18 @@
 package git
 
 import (
+	"bytes"
 	"fmt"
-	"os/exec"
-	"strings"
+
+	"github.com/zc2638/releaser/pkg/util"
 )
 
 func run(command string) (string, error) {
-	args := strings.Split(command, " ")
-	var cmd *exec.Cmd
-	if len(args) > 1 {
-		cmd = exec.Command(args[0], args[1:]...)
-	} else {
-		cmd = exec.Command(args[0])
-	}
-	output, err := cmd.CombinedOutput()
+	output, err := util.Exec(command)
 	if err != nil {
-		return "", fmt.Errorf("%v: %s", err, output)
+		return "", err
 	}
+	output = bytes.TrimSuffix(output, []byte("\n"))
 	return string(output), nil
 }
 
@@ -47,6 +42,6 @@ func GetTagByCommit(commit string) (string, error) {
 	return run(fmt.Sprintf("git tag --points-at %s", commit))
 }
 
-func GetLatestTag() (string, error) {
+func GetRecentTag() (string, error) {
 	return run("git describe --abbrev=0 --tags")
 }

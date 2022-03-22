@@ -35,9 +35,10 @@ func init() {
 }
 
 type VersionGit struct {
-	Branch string `json:"branch,omitempty" yaml:"branch,omitempty"`
-	Commit string `json:"commit,omitempty" yaml:"commit,omitempty"`
-	Tag    string `json:"tag,omitempty" yaml:"tag,omitempty"`
+	Branch    string `json:"branch,omitempty" yaml:"branch,omitempty"`
+	Commit    string `json:"commit,omitempty" yaml:"commit,omitempty"`
+	Tag       string `json:"tag,omitempty" yaml:"tag,omitempty"`
+	RecentTag string `json:"recentTag,omitempty" yaml:"recentTag,omitempty"`
 }
 
 type VersionEntry struct {

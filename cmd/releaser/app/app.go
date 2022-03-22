@@ -43,8 +43,10 @@ func NewRootCommand() *cobra.Command {
 	cmd.AddCommand(
 		newInitCommand(),
 		newCreateCommand(),
+		newDeleteCommand(),
 		newSetCommand(),
 		newGetCommand(),
+		newWalkCommand(),
 	)
 	return cmd
 }
@@ -127,4 +129,38 @@ func initStorage() error {
 		return err
 	}
 	return os.MkdirAll(storage.DefaultPath, os.ModePerm)
+}
+
+func newDeleteCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:          "delete",
+		SilenceUsage: true,
+		RunE: func(_ *cobra.Command, args []string) error {
+			if len(args) == 0 {
+				return errors.New("please enter the service name")
+			}
+			if err := util.CheckArgs(args, 1); err != nil {
+				return err
+			}
+			serviceName := args[0]
+
+			data, err := storage.Read(storage.ManifestName)
+			if err != nil {
+				return fmt.Errorf("read manifest failed: %v", err)
+			}
+			manifest := &storage.Manifest{}
+			if err := manifest.Unmarshal(data); err != nil {
+				return fmt.Errorf("unmarshal manifest failed: %v", err)
+			}
+
+			ss := sets.NewString(manifest.Services...)
+			ss.Remove(serviceName)
+			manifest.Services = ss.List()
+			if err := storage.Save(manifest, storage.ManifestName); err != nil {
+				return fmt.Errorf("save manifest failed: %v", err)
+			}
+			return nil
+		},
+	}
+	return cmd
 }

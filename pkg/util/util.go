@@ -16,6 +16,8 @@ package util
 
 import (
 	"fmt"
+	"os/exec"
+	"strings"
 )
 
 func CheckArgs(args []string, num int) error {
@@ -32,4 +34,19 @@ func CheckArgsGT(args []string, num int) error {
 		return fmt.Errorf("unusual number of parameters, max expect %d, take %d", num, l)
 	}
 	return nil
+}
+
+func Exec(command string) ([]byte, error) {
+	args := strings.Split(command, " ")
+	var cmd *exec.Cmd
+	if len(args) > 1 {
+		cmd = exec.Command(args[0], args[1:]...)
+	} else {
+		cmd = exec.Command(args[0])
+	}
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return nil, fmt.Errorf("%v: %s", err, output)
+	}
+	return output, nil
 }

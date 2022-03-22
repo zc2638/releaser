@@ -116,4 +116,4 @@ releaser get <service name> --filter meta.status
 
 ## TODO
 ### releaser delete
-### releaser each
+### releaser walk
