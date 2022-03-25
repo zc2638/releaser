@@ -41,15 +41,23 @@ type Marshaler interface {
 }
 
 func Read(name string) ([]byte, error) {
-	return os.ReadFile(filepath.Join(DefaultPath, name))
+	return ReadWithRoot("", name)
 }
 
 func Save(m Marshaler, name string) error {
+	return SaveWithRoot(m, "", name)
+}
+
+func ReadWithRoot(root, name string) ([]byte, error) {
+	return os.ReadFile(filepath.Join(root, DefaultPath, name))
+}
+
+func SaveWithRoot(m Marshaler, root, name string) error {
 	b, err := m.Marshal()
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(filepath.Join(DefaultPath, name), b, os.ModePerm)
+	return os.WriteFile(filepath.Join(root, DefaultPath, name), b, os.ModePerm)
 }
 
 type Manifest struct {

@@ -15,6 +15,7 @@
 package app
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -27,9 +28,10 @@ import (
 )
 
 type SetOption struct {
-	Git      bool
-	Version  string
-	Metadata []string
+	Git         bool
+	ProjectPath string
+	Version     string
+	Metadata    []string
 }
 
 func newSetCommand() *cobra.Command {
@@ -51,22 +53,6 @@ func newSetCommand() *cobra.Command {
 				return fmt.Errorf("unmarshal manifest failed: %v", err)
 			}
 
-			gitEntry := &storage.GitEntry{}
-			if opt.Git {
-				branch, err := git.CurrentBranch()
-				if err != nil {
-					return err
-				}
-				commit, err := git.CurrentCommit()
-				if err != nil {
-					return err
-				}
-				tag, _ := git.GetTagByCommit(commit)
-				gitEntry.Branch = branch
-				gitEntry.Commit = commit
-				gitEntry.Tag = tag
-			}
-
 			meta := make(map[string]string)
 			for _, v := range opt.Metadata {
 				arr := strings.SplitN(v, "=", 2)
@@ -77,54 +63,89 @@ func newSetCommand() *cobra.Command {
 			}
 
 			if len(args) == 0 {
-				if opt.Git {
-					manifest.Git = gitEntry
-				}
-				if opt.Version != "" {
-					manifest.Version = opt.Version
-				}
-				if manifest.Metadata == nil {
-					manifest.Metadata = make(map[string]string)
-				}
-				for k, v := range meta {
-					manifest.Metadata[k] = v
-				}
-				return storage.Save(manifest, storage.ManifestName)
+				return setManifest(opt, manifest, meta)
 			}
-
-			serviceName := args[0]
-			servicePath := serviceName + ".yaml"
-			ss := sets.NewString(manifest.Services...)
-			if !ss.Has(serviceName) {
-				return fmt.Errorf("service %s not exist", serviceName)
-			}
-
-			entry := &storage.Entry{}
-			// Regenerate information if read failed
-			data, err = storage.Read(servicePath)
-			if err == nil {
-				_ = entry.Unmarshal(data)
-			}
-			if opt.Git {
-				entry.Git = gitEntry
-			}
-			if opt.Version != "" {
-				entry.Version = opt.Version
-			}
-			if entry.Metadata == nil {
-				entry.Metadata = make(map[string]string)
-			}
-			for k, v := range meta {
-				entry.Metadata[k] = v
-			}
-			entry.Name = serviceName
-			entry.Kind = storage.KindService
-			return storage.Save(entry, servicePath)
+			return setService(opt, manifest, meta, args[0])
 		},
 	}
 
 	cmd.Flags().BoolVar(&opt.Git, "git", opt.Git, "Whether to automatically parse git information")
+	cmd.Flags().StringVarP(&opt.ProjectPath, "project-path", "p", opt.ProjectPath,
+		"The root path of the project that needs to be imported as a service, the system will automatically find and resolve the storage directory under it")
 	cmd.Flags().StringVar(&opt.Version, "version", opt.Version, "Set service version. e.g. 1.0.0、1.0.0-beta.1")
 	cmd.Flags().StringArrayVar(&opt.Metadata, "meta", nil, "Set custom key-value pair parameters. e.g. status=ok")
 	return cmd
+}
+
+func setManifest(opt *SetOption, manifest *storage.Manifest, meta map[string]string) error {
+	if opt.Git {
+		branch, err := git.CurrentBranch()
+		if err != nil {
+			return err
+		}
+		commit, err := git.CurrentCommit()
+		if err != nil {
+			return err
+		}
+		tag, _ := git.GetTagByCommit(commit)
+
+		manifest.Git = &storage.GitEntry{
+			Branch: branch,
+			Commit: commit,
+			Tag:    tag,
+		}
+	}
+	if opt.Version != "" {
+		manifest.Version = opt.Version
+	}
+	if manifest.Metadata == nil {
+		manifest.Metadata = make(map[string]string)
+	}
+	for k, v := range meta {
+		manifest.Metadata[k] = v
+	}
+	return storage.Save(manifest, storage.ManifestName)
+}
+
+func setService(opt *SetOption, manifest *storage.Manifest, meta map[string]string, serviceName string) error {
+	servicePath := serviceName + ".yaml"
+	ss := sets.NewString(manifest.Services...)
+	if !ss.Has(serviceName) {
+		return fmt.Errorf("service %s not exist", serviceName)
+	}
+
+	entry := &storage.Entry{}
+	if opt.ProjectPath != "" {
+		data, err := storage.ReadWithRoot(opt.ProjectPath, storage.ManifestName)
+		if err != nil {
+			return fmt.Errorf("read [project as service] manifest failed: %v", err)
+		}
+		svcManifest := &storage.Manifest{}
+		if err := svcManifest.Unmarshal(data); err != nil {
+			return fmt.Errorf("unmarshal [project as service] manifest failed: %v", err)
+		}
+		entry = &svcManifest.Entry
+	}
+
+	// Regenerate information if read failed
+	data, err := storage.Read(servicePath)
+	if err == nil {
+		_ = entry.Unmarshal(data)
+	}
+	if opt.Git {
+		return errors.New("does not support the service to automatically generate git information")
+	}
+	if opt.Version != "" {
+		entry.Version = opt.Version
+	}
+	if entry.Metadata == nil {
+		entry.Metadata = make(map[string]string)
+	}
+	for k, v := range meta {
+		entry.Metadata[k] = v
+	}
+
+	entry.Name = serviceName
+	entry.Kind = storage.KindService
+	return storage.Save(entry, servicePath)
 }

@@ -1,6 +1,6 @@
 module github.com/zc2638/releaser
 
-go 1.18
+go 1.17
 
 require (
 	github.com/99nil/go v0.0.0-20210924013233-ebd290da12d6
