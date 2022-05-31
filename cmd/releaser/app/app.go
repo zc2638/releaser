@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/99nil/go/sets"
+	"github.com/99nil/gopkg/sets"
 	"github.com/blang/semver/v4"
 	"github.com/spf13/cobra"
 

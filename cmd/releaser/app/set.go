@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/99nil/go/sets"
+	"github.com/99nil/gopkg/sets"
 	"github.com/spf13/cobra"
 
 	"github.com/zc2638/releaser/pkg/git"
