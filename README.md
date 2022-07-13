@@ -42,7 +42,7 @@ go install -v github.com/zc2638/releaser/cmd/releaser@latest
 ### Install from Docker
 
 ```shell
-docker run --rm -it zc2638/releaser:0.0.1 
+docker run --rm -it zc2638/releaser:latest
 ```
 
 ### Build from source
