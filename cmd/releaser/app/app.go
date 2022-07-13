@@ -33,7 +33,7 @@ func NewRootCommand() *cobra.Command {
 		releaser.Version.Version = &semver.Version{
 			Major: 0,
 			Minor: 0,
-			Patch: 1,
+			Patch: 2,
 		}
 	}
 	cmd := &cobra.Command{

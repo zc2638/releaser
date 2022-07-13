@@ -57,7 +57,14 @@ func SaveWithRoot(m Marshaler, root, name string) error {
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(filepath.Join(root, DefaultPath, name), b, os.ModePerm)
+	currentPath := filepath.Join(root, DefaultPath, name)
+	currentDir := filepath.Dir(currentPath)
+	if _, err := os.Stat(currentDir); os.IsNotExist(err) {
+		if err := os.MkdirAll(currentDir, os.ModePerm); err != nil {
+			return err
+		}
+	}
+	return os.WriteFile(currentPath, b, os.ModePerm)
 }
 
 type Manifest struct {
