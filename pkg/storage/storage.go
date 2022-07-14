@@ -108,7 +108,7 @@ func (e *Entry) ToMap() map[string]string {
 	m["kind"] = e.Kind
 	m["version"] = e.Version
 	for k, v := range e.Metadata {
-		m["meta."+k] = v
+		m["meta_"+k] = v
 	}
 	return m
 }

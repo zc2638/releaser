@@ -120,5 +120,5 @@ releaser delete <service name>
 ### walk
 
 ```shell
-releaser walk --command 'echo "$name $version $meta.status"'
+releaser walk --command 'echo "$name $version $meta_status"'
 ```
