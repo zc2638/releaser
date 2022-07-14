@@ -16,7 +16,6 @@ package app
 
 import (
 	"fmt"
-	"os"
 	"runtime/debug"
 
 	"github.com/zc2638/releaser/pkg/util"
@@ -52,13 +51,11 @@ func newWalkCommand() *cobra.Command {
 
 			entries := make([]*storage.Entry, 0, len(manifest.Services))
 			for _, s := range manifest.Services {
+				entry := &storage.Entry{}
 				sd, err := storage.Read(s + ".yaml")
 				if err != nil {
-					// Skip if not present
-					continue
-				}
-				entry := &storage.Entry{}
-				if err := entry.Unmarshal(sd); err != nil {
+					entry.Name = s
+				} else if err := entry.Unmarshal(sd); err != nil {
 					return err
 				}
 				entries = append(entries, entry)
@@ -66,8 +63,7 @@ func newWalkCommand() *cobra.Command {
 
 			for _, entry := range entries {
 				m := entry.ToMap()
-				command := os.Expand(opt.Command, func(s string) string { return m[s] })
-				output, err := util.Exec(command)
+				output, err := util.ExecWithEnv(opt.Command, m)
 				if err != nil {
 					return err
 				}

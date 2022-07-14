@@ -16,6 +16,7 @@ package util
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -37,6 +38,10 @@ func CheckArgsGT(args []string, num int) error {
 }
 
 func Exec(command string) ([]byte, error) {
+	return ExecWithEnv(command, nil)
+}
+
+func ExecWithEnv(command string, envMap map[string]string) ([]byte, error) {
 	args := strings.Split(command, " ")
 	var cmd *exec.Cmd
 	if len(args) > 1 {
@@ -51,6 +56,14 @@ func Exec(command string) ([]byte, error) {
 	} else {
 		cmd = exec.Command(args[0])
 	}
+
+	currentEnvSet := os.Environ()
+	envSet := make([]string, 0, len(envMap)+len(currentEnvSet))
+	envSet = append(envSet, currentEnvSet...)
+	for k, v := range envMap {
+		envSet = append(envSet, k+"="+v)
+	}
+	cmd.Env = envSet
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
