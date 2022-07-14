@@ -33,13 +33,15 @@ func NewRootCommand() *cobra.Command {
 		releaser.Version.Version = &semver.Version{
 			Major: 0,
 			Minor: 0,
-			Patch: 2,
+			Patch: 3,
 		}
 	}
 	cmd := &cobra.Command{
 		Use:     "releaser",
 		Version: releaser.Version.String(),
 	}
+	cmd.SetVersionTemplate(`{{printf "%s" .Version}}
+`)
 	cmd.AddCommand(
 		newInitCommand(),
 		newCreateCommand(),

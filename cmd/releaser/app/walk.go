@@ -54,7 +54,8 @@ func newWalkCommand() *cobra.Command {
 			for _, s := range manifest.Services {
 				sd, err := storage.Read(s + ".yaml")
 				if err != nil {
-					return err
+					// Skip if not present
+					continue
 				}
 				entry := &storage.Entry{}
 				if err := entry.Unmarshal(sd); err != nil {
@@ -70,7 +71,7 @@ func newWalkCommand() *cobra.Command {
 				if err != nil {
 					return err
 				}
-				println(string(output))
+				fmt.Print(string(output))
 			}
 			return nil
 		},

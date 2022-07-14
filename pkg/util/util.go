@@ -40,10 +40,18 @@ func Exec(command string) ([]byte, error) {
 	args := strings.Split(command, " ")
 	var cmd *exec.Cmd
 	if len(args) > 1 {
-		cmd = exec.Command(args[0], args[1:]...)
+		execPath, err := exec.LookPath("bash")
+		if err == nil {
+			cmd = exec.Command(execPath, "-c", command)
+		} else if execPath, err = exec.LookPath("sh"); err == nil {
+			cmd = exec.Command(execPath, "-c", command)
+		} else {
+			cmd = exec.Command(args[0], args[1:]...)
+		}
 	} else {
 		cmd = exec.Command(args[0])
 	}
+
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return nil, fmt.Errorf("%v: %s", err, output)

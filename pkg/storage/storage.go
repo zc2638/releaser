@@ -104,15 +104,11 @@ func (e *Entry) Unmarshal(in []byte) error {
 
 func (e *Entry) ToMap() map[string]string {
 	m := make(map[string]string)
-	m[buildWithPrefix("name")] = e.Name
-	m[buildWithPrefix("kind")] = e.Kind
-	m[buildWithPrefix("version")] = e.Version
+	m["name"] = e.Name
+	m["kind"] = e.Kind
+	m["version"] = e.Version
 	for k, v := range e.Metadata {
-		m[buildWithPrefix("meta."+k)] = v
+		m["meta."+k] = v
 	}
 	return m
-}
-
-func buildWithPrefix(s string) string {
-	return "releaser." + s
 }

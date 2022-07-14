@@ -1,7 +1,3 @@
 name: releaser
 kind: Project
 version: 0.0.1
-git:
-    branch: main
-    commit: 66aad2f06a74574519af5cb3feb16ebc7f2f8b48
-    tag: ""
