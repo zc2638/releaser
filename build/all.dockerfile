@@ -16,7 +16,7 @@ FROM node:18.5.0-alpine3.16
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories && \
     apk --update upgrade && \
-    apk add git ca-certificates tzdata && \
+    apk add git ca-certificates tzdata tar && \
     rm -rf /var/cache/apk/* && \
     npm install -g -registry=https://registry.npm.taobao.org/ \
   conventional-changelog \
