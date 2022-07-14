@@ -12,7 +12,7 @@ ADD . .
 RUN go run github.com/zc2638/releaser/cmd/releaser set --git &&\
  GOOS=linux CGO_ENABLED=0 go build -ldflags="-s -w -X $(go run github.com/zc2638/releaser/cmd/releaser get)" -o releaser github.com/zc2638/releaser/cmd/releaser
 
-FROM node:15.5-alpine
+FROM node:18.5.0-alpine3.16
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories && \
     apk --update upgrade && \
