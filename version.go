@@ -22,12 +22,21 @@ import (
 	"github.com/blang/semver/v4"
 )
 
-var data string
+var (
+	data string
+	ver  string
+)
 
 var Version *VersionEntry
 
 func init() {
 	Version = &VersionEntry{}
+	if ver != "" {
+		sver, err := semver.ParseTolerant(ver)
+		if err == nil {
+			Version.Version = &sver
+		}
+	}
 	if data != "" {
 		_ = Decode(data, Version)
 	}

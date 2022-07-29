@@ -4,7 +4,15 @@ A tool for Golang programs that automatically generate versions at build time.
 
 ## Quick Start
 
-### 1. Code import
+### Use in direct
+
+```shell
+go build -ldflags="-X github.com/zc2638/releaser.ver=0.0.1" main.go
+```
+
+### Use in rely
+
+#### 1. Code import
 
 ```go
 package main
@@ -25,7 +33,7 @@ func main() {
 }
 ```
 
-### 2. Run Build
+#### 2. Run Build
 
 ```shell
 go build -ldflags="-X $(releaser get)" main.go
