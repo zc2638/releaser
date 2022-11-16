@@ -96,6 +96,7 @@ type Entry struct {
 
 func (e *Entry) Marshal() ([]byte, error) {
 	return yaml.Marshal(&e)
+
 }
 
 func (e *Entry) Unmarshal(in []byte) error {

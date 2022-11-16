@@ -1,4 +1,4 @@
-FROM golang:1.17 as builder
+FROM golang:1.19 as builder
 ENV GOPROXY=https://goproxy.io,direct
 ENV GO111MODULE=on
 
@@ -9,8 +9,7 @@ RUN go mod download
 
 WORKDIR /work
 ADD . .
-RUN go run github.com/zc2638/releaser/cmd/releaser set --git &&\
- GOOS=linux CGO_ENABLED=0 go build -ldflags="-s -w -X $(go run github.com/zc2638/releaser/cmd/releaser get)" -o releaser github.com/zc2638/releaser/cmd/releaser
+RUN make build
 
 FROM alpine:3.6 as alpine
 RUN apk add -U --no-cache ca-certificates
@@ -22,7 +21,7 @@ LABEL maintainer="zc2638" \
     version="0.0.3"
 
 COPY --from=alpine /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=builder /work/releaser /bin/releaser
+COPY --from=builder /usr/local/bin/releaser /usr/local/bin/releaser
 
 WORKDIR /work
 CMD ["releaser", "-v"]

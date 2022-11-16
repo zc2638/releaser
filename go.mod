@@ -1,9 +1,9 @@
 module github.com/zc2638/releaser
 
-go 1.17
+go 1.19
 
 require (
-	github.com/99nil/gopkg v0.0.0-20220531085926-60afce00972b
+	github.com/99nil/gopkg v0.0.0-20221020090523-251ae5920751
 	github.com/blang/semver/v4 v4.0.0
 	github.com/spf13/cobra v1.3.0
 	gopkg.in/yaml.v3 v3.0.1
